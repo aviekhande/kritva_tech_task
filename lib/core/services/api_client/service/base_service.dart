@@ -1,78 +1,61 @@
-// import 'dart:convert';
-// import 'dart:developer';
+import 'dart:developer';
+import 'package:dio/dio.dart';
+import '../../../config/app_config.dart';
+import '../../../exceptions/server_exception.dart';
 
-// import 'package:caesar_cipher/core/services/chunked_upload/cubit/cubit/uploading_files_cubit.dart';
-// import 'package:caesar_cipher/core/services/chunked_upload/presentation/bloc/chunked_upload_bloc.dart';
-// import 'package:caesar_cipher/core/services/shared_preferences/shared_preferences_service.dart';
-// import 'package:caesar_cipher/init_dependencies.dart';
-// import 'package:dio/dio.dart';
-// import '../../../config/app_headers.dart';
-// import '../../../routes/app_router.dart';
-// import '../../../routes/app_router.gr.dart';
-// import '../../../utils/utils.dart';
+class BaseService {
+  late final Dio _dio;
 
-// abstract class BaseService {
-//   final Dio dio;
+  BaseService() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: AppConfig.baseUrl,
+        connectTimeout: const Duration(milliseconds: AppConfig.connectTimeout),
+        receiveTimeout: const Duration(milliseconds: AppConfig.receiveTimeout),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
-//   BaseService(this.dio);
+    _dio.interceptors.add(
+      LogInterceptor(
+        request: true,
+        responseBody: true,
+        requestBody: true,
+        error: true,
+        logPrint: (obj) => log(obj.toString()),
+      ),
+    );
+  }
 
-//   Future<void> setupHeaders() async {
-//     final headers = await AppHeaders().getHeaders();
-//     dio.options.headers = headers;
+  Dio get dio => _dio;
 
-//     if (!dio.interceptors.any((i) => i.runtimeType == LogInterceptor)) {
-//       dio.interceptors.add(Utils.getLoggingInterceptor());
-//     }
-//   }
+  Future<T> safeRequest<T>(Future<T> Function() request) async {
+    try {
+      return await request();
+    } on DioException catch (e) {
+      log('DioException: ${e.message}');
+      log('Status: ${e.response?.statusCode}');
 
-//   Future<T> safeRequest<T>(
-//     Future<T> Function() request, {
-//     required T Function(Map<String, dynamic>)? fromJson,
-//   }) async {
-//     try {
-//       await setupHeaders();
-//       final result = await request();
-//       if (jsonDecode(jsonEncode(result))['success'] == 4) {
-//         await serviceLocator<SharedPreferencesService>().deleteToken();
-//         serviceLocator<AppRouter>().replaceAll([const LoginRoute()]);
-//         deactivateStompChat();
-//         final uploadingFilesCubit = serviceLocator<UploadingFilesCubit>();
-//         final chunkedUploadBloc = serviceLocator<ChunkedUploadBloc>();
-//         uploadingFilesCubit.abortAllUploadsOnLogout(chunkedUploadBloc);
-//       }
-//       log("BASE SERVICE API RESULT JSON: ${jsonEncode(result)}");
-//       return result;
-//     } on DioException catch (e) {
-//       log("DioException caught in safeRequest:$e");
-//       log("Status Code: ${e.response?.statusCode}");
-//       log("Response Data: ${e.response?.data}");
-//       // Handle connection error (no internet, DNS fail, etc.)
-//       if (e.type == DioExceptionType.connectionError) {
-//         if (fromJson != null) {
-//           log("Connection error occurred");
-//           return fromJson({
-//             'data': null,
-//             'success': 99,
-//             'message':
-//                 'Unable to connect to the server. Please check your internet connection or try again later.',
-//           });
-//         }
-//       }
-//       if (e.response?.statusCode == 401) {
-//         await serviceLocator<SharedPreferencesService>().deleteToken();
-//         serviceLocator<AppRouter>().replaceAll([const LoginRoute()]);
-//         deactivateStompChat();
-//         final uploadingFilesCubit = serviceLocator<UploadingFilesCubit>();
-//         final chunkedUploadBloc = serviceLocator<ChunkedUploadBloc>();
-//         uploadingFilesCubit.abortAllUploadsOnLogout(chunkedUploadBloc);
-//       }
-//       if (e.response?.data is Map<String, dynamic> && fromJson != null) {
-//         return fromJson(e.response!.data);
-//       }
-//       throw Exception("API Error: ${e.message}");
-//     } catch (e, stackTrace) {
-//       log("Unexpected error in safeRequest: $e\n$stackTrace");
-//       throw Exception("Something went wrong: $e");
-//     }
-//   }
-// }
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout) {
+        throw const ServerException('No internet connection. Please try again.');
+      }
+
+      if (e.response?.statusCode == 404) {
+        throw const ServerException('Resource not found.');
+      }
+
+      if (e.response?.statusCode == 500) {
+        throw const ServerException('Internal server error. Please try later.');
+      }
+
+      throw ServerException(e.message ?? 'An unexpected error occurred.');
+    } catch (e, s) {
+      log('Unexpected error: $e\n$s');
+      throw const ServerException('Something went wrong. Please try again.');
+    }
+  }
+}

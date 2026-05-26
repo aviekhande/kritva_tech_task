@@ -3,7 +3,7 @@ class ApiResponse<T> {
   final String? message;
   final bool success;
 
-  ApiResponse({this.data, this.message, this.success = false});
+  const ApiResponse({this.data, this.message, this.success = false});
 
   factory ApiResponse.success(T data, [String? message]) {
     return ApiResponse(data: data, success: true, message: message);

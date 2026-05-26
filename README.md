@@ -1,4 +1,4 @@
-# kitty_chitty
+# kritva_tech_task
 
 A new Flutter project.
 

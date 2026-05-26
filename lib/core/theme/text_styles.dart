@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-// Public Sans Font Styles
 const kTextStylePublicSans300 = TextStyle(fontFamily: 'PublicSans-Light');
 const kTextStylePublicSans400 = TextStyle(fontFamily: 'PublicSans-Regular');
 const kTextStylePublicSans500 = TextStyle(fontFamily: 'PublicSans-Medium');

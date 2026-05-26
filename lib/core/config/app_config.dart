@@ -1,19 +1,15 @@
 class AppConfig {
-  //Basic auth credentials
-  static const String username = 'admin';
-  static const String password = 'Mypcot@2025';
-  static const String acceptedLanguage = 'en';
-  static const String uuid = '1234';
+  AppConfig._();
 
-  //Base URL
+  // JSONPlaceholder base URL (free public dummy API)
+  static const String baseUrl = 'https://jsonplaceholder.typicode.com';
 
-  //LOCAL
-  // static const String baseUrl =
-  //     'https://696c10344378.ngrok-free.app/webservices/v1';
+  // Endpoints
+  static const String postsEndpoint = '/posts';
+  static const String usersEndpoint = '/users';
+  static const String albumsEndpoint = '/albums';
 
-  // static const String stompUrl =
-  //     'ws://696c10344378.ngrok-free.app/webservices/ws';
-
-  // APIS
-  static const String loginUrl = '/users/login';
+  // Timeouts
+  static const int connectTimeout = 10000;
+  static const int receiveTimeout = 15000;
 }

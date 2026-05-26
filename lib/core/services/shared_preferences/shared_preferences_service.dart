@@ -1,31 +1,54 @@
-// import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:developer';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// class SharedPreferencesService {
-//   final SharedPreferences _sharedPreferences;
+class SharedPreferencesService {
+  final SharedPreferences _prefs;
 
-//   SharedPreferencesService(this._sharedPreferences);
+  SharedPreferencesService(this._prefs);
 
-//   Future<void> saveToken(String accessToken) async {
-//     await _sharedPreferences.setString("accessToken", accessToken);
-//   }
+  static const String _keyUsers = 'registered_users';
+  static const String _keyCurrentUser = 'current_user';
 
-//   Future<String?> getToken() async {
-//     debugPrint("getting token");
-//     return _sharedPreferences.getString("accessToken");
-//   }
+  // ── User Registration ────────────────────────────────────────────────────
 
-//   Future<bool?> deleteToken() async {
-//     debugPrint("delete token");
+  Future<void> registerUser(String phone, String password) async {
+    final users = getAllUsers();
+    users[phone] = password;
+    await _prefs.setString(_keyUsers, jsonEncode(users));
+    log('User registered: $phone');
+  }
 
-//     return _sharedPreferences.remove("accessToken");
-//   }
+  bool phoneExists(String phone) {
+    return getAllUsers().containsKey(phone);
+  }
 
-//    Future<void> setUserPreviouslyLoggedIn() async {
-//     await _sharedPreferences.setBool('userPreviouslyLoggedIn', true);
-//   }
+  Map<String, String> getAllUsers() {
+    final raw = _prefs.getString(_keyUsers);
+    if (raw == null) return {};
+    final decoded = jsonDecode(raw) as Map<String, dynamic>;
+    return decoded.map((k, v) => MapEntry(k, v.toString()));
+  }
 
-//   Future<bool> isUserPreviouslyLoggedIn() async {
-//     return _sharedPreferences.getBool('userPreviouslyLoggedIn') ?? false;
-//   }
-// }
+  String? getPasswordForPhone(String phone) {
+    return getAllUsers()[phone];
+  }
+
+  // ── Session ──────────────────────────────────────────────────────────────
+
+  Future<void> saveCurrentUser(String phone) async {
+    await _prefs.setString(_keyCurrentUser, phone);
+    log('Session saved for: $phone');
+  }
+
+  String? getCurrentUser() {
+    return _prefs.getString(_keyCurrentUser);
+  }
+
+  Future<void> clearCurrentUser() async {
+    await _prefs.remove(_keyCurrentUser);
+    log('Session cleared');
+  }
+
+  bool get isLoggedIn => getCurrentUser() != null;
+}

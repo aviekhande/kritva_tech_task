@@ -1,53 +1,33 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class AppDimens {
-  static double appDesignHeight = 917;
-  static double appDesignWidth = 412;
+  AppDimens._();
 
-  //Ref.
-  static double nowShowingPosterWidth = 143.sp;
-  static double nowShowingPosterHeight = 212.sp;
-  static double nowShowingCardHeight = 310.sp;
-  static double nowShowingCardWidth = 143.sp;
-  static double popularPosterWidth = 85.sp;
-  static double popularPosterHeight = 128.sp;
-  static double castProfileHeight = 70.sp;
-  static double castProfileWidth = 70.sp;
-  static double movieDetailBackdropHeight = 200.sp;
+  static const double appDesignHeight = 917;
+  static const double appDesignWidth = 412;
 
-  //Custom App Bar
-  static double customAppBarHeight = 116.h;
-  static double backIconDim = 24.h;
+  // Padding / Spacing
+  static const double p4 = 4;
+  static const double p8 = 8;
+  static const double p12 = 12;
+  static const double p16 = 16;
+  static const double p20 = 20;
+  static const double p24 = 24;
+  static const double p28 = 28;
+  static const double p32 = 32;
+  static const double p40 = 40;
+  static const double p48 = 48;
 
-  //radius
-  static double r12 = 12.r;
-  static double r8 = 8.r;
+  // Radius
+  static const double r8 = 8;
+  static const double r12 = 12;
+  static const double r16 = 16;
+  static const double r20 = 20;
 
-  //paddings
-  static double p2 = 2.sp;
-  static double p4 = 4.sp;
-  static double p6 = 6.sp;
-  static double p8 = 8.sp;
-  static double p9 = 9.sp;
-  static double p10 = 10.sp;
-  static double p12 = 12.sp;
-  static double p14 = 14.sp;
-  static double p16 = 16.sp;
-  static double p18 = 18.sp;
-  static double p20 = 20.sp;
-  static double p22 = 22.sp;
-  static double p24 = 24.sp;
-  static double p26 = 26.sp;
-  static double p28 = 28.sp;
-  static double p30 = 30.sp;
-  static double p32 = 32.sp;
-  static double p34 = 34.sp;
-  static double p36 = 36.sp;
-  static double p38 = 38.sp;
-  static double p40 = 40.sp;
-  static double p42 = 42.sp;
-  static double p48 = 48.sp;
-  static double p54 = 24.sp;
-  static double p60 = 60.sp;
-  static double p64 = 64.sp;
+  // Icon sizes
+  static const double iconSm = 18;
+  static const double iconMd = 24;
+  static const double iconLg = 32;
+
+  // Button
+  static const double buttonHeight = 54;
+  static const double buttonRadius = 14;
 }
