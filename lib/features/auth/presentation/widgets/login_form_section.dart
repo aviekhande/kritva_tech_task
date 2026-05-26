@@ -8,7 +8,7 @@ import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/utils/widgets/app_text_field.dart';
 import '../../../../core/utils/widgets/primary_button.dart';
 import '../bloc/auth_bloc.dart';
-import '../utils/login_animations.dart';
+import '../../../../core/utils/login_animations.dart';
 
 /// Form section for login with email and password fields
 class LoginFormSection extends StatefulWidget {

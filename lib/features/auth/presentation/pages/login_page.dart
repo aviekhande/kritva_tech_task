@@ -7,7 +7,7 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/theme/text_styles.dart';
 import '../bloc/auth_bloc.dart';
-import '../utils/login_animations.dart';
+import '../../../../core/utils/login_animations.dart';
 import '../widgets/login_header.dart';
 import '../widgets/login_form_section.dart';
 import '../widgets/login_register_link.dart';
